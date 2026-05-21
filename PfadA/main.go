@@ -2,83 +2,76 @@ package main
 
 import "fmt"
 
-/* STORY-KONTEXT:
-   Um den reissenden Fluss ins Function Territory zu überqueren, müssen die Helden
-   eine Brücke konstruieren. Sie nutzen IF/ELSE für die Materialprüfung,
-   SWITCH für die Pfeilerarten und LOOPS für die tausenden Haltekabel.
-*/
-
-// --- TEIL 1: Architektur-Veranschaulichung (Strukturen & Embedding) ---
-// Studieren Sie diesen Abschnitt und versuchen Sie zu verstehen, wie das hier "funktioniert!"
-
-type Baumaterial struct {
-	Name      string
-	Qualitaet int // Wert von 0 bis 100
+/*
+ * TEIL 1: Die Basis-Auftriebsfunktion
+ * Ein Falke benötigt eine Grundkraft, um in der Luft zu bleiben.
+ * Diese berechnet sich aus Windgeschwindigkeit + Anflugwinkel.
+ */
+func berechneBasisAuftrieb(windgeschwindigkeit int, anflugwinkel int) int {
+	ergebnis := windgeschwindigkeit + anflugwinkel
+	return ergebnis
 }
 
-type BrueckenPfeiler struct {
-	Baumaterial        // Embedding: Ein Pfeiler besteht aus Material
-	PfeilerTyp  string // z.B. "Stein", "Holz", "Stahl"
-	IstStabil   bool
+/*
+ * TEIL 2: Der Energieverbrauch
+ * Fliegen verbraucht Energie. Je schwerer der Falke, desto mehr.
+ * Formel: (Gewicht * Strecke) / 10
+ */
+func berechneEnergieVerbrauch(gewicht int, strecke int) int {
+	ergebnis := (gewicht * strecke) / 10
+	return ergebnis
+}
+
+/*
+ * TEIL 3: Die finale Flug-Validierung
+ */
+func checkFlugStatus(auftrieb int, verbrauch int) (int, string) {
+	differenz := auftrieb - verbrauch
+	status := ""
+
+	if differenz > 0 {
+		status = "Stabil"
+	} else {
+		status = "Absturzgefahr"
+	}
+
+	return differenz, status
+}
+
+/*
+ * TEIL 4: Das freudige Kreischen des Falkens
+ */
+func kreischen() {
+	fmt.Println("KKKRREEEIIIISSSCCCHHHHH")
 }
 
 func main() {
-	fmt.Println("=== BAU-PROTOKOLL: BRÜCKE DER LOGIK ===")
+	fmt.Println("--- Analyse der Variable-Falken startet ---")
 
-	// --- TEIL 2: Initialisierung der Objekte ---
-	pfeilerKern := BrueckenPfeiler{
-		Baumaterial: Baumaterial{
-			Name:      "Granit-Block",
-			Qualitaet: 85,
-		},
-		PfeilerTyp: "Stein",
-		IstStabil:  false,
-	}
+	// 1. Aufruf der Basis-Funktion
+	speed := 45
+	winkel := 12
+	aktuellerAuftrieb := berechneBasisAuftrieb(speed, winkel)
+	fmt.Printf("Berechneter Auftrieb: %d Einheiten\n", aktuellerAuftrieb)
 
-	// Variablen für die Bausteuerung
-	var materialQualitaet int = pfeilerKern.Qualitaet
-	var pfeilerTyp string = pfeilerKern.PfeilerTyp
-	var kabelAnzahl int = 5 // Wie viele Haltekabel gespannt werden müssen
+	// 2. Aufruf der Energie-Funktion
+	gewicht := 20
+	distanz := 20
+	verbrauch := berechneEnergieVerbrauch(gewicht, distanz)
+	fmt.Printf("Voraussichtlicher Verbrauch: %d Einheiten\n", verbrauch)
 
-	// --- TEIL 3: IHRE IMPLEMENTIERUNG ---
+	// 3. Finale Prüfung
+	kraftReserve, flugZustand := checkFlugStatus(aktuellerAuftrieb, verbrauch)
 
-	// AUFGABE A: Materialprüfung (If-Else)
-	// Prüfen Sie, ob die 'materialQualitaet' grösser oder gleich 80 ist.
+	fmt.Println("-------------------------------------------")
+	fmt.Printf("Analyse-Ergebnis: %s (Reserve: %d)\n", flugZustand, kraftReserve)
 
-	if materialQualitaet >= 80 {
-		fmt.Println("[CHECK]: Materialprüfung bestanden. Fundament wird gesetzt.")
-		pfeilerKern.IstStabil = true
-
-		// AUFGABE B: Pfeiler-Konstruktion (Switch)
-		// Nutzen Sie einen Switch für die Variable 'pfeilerTyp'.
-		// - Case "Stein": Geben Sie "Massiver Steinpfeiler verankert." aus.
-		// - Case "Holz":  Geben Sie "Warnung: Holzpfeiler könnten bei Flut brechen!" aus.
-		// - Default:      Geben Sie "Unbekanntes Material! Stabilität nicht garantiert." aus.
-
-		switch pfeilerTyp {
-		case "Stein":
-			fmt.Println("Massiver Steinpfeiler verankert.")
-		case "Holz":
-			fmt.Println("Warnung: Holzpfeiler könnten bei Flut brechen!")
-		default:
-			fmt.Println("Unbekanntes Material! Stabilität nicht garantiert.")
-		}
-
-		// AUFGABE C: Haltekabel spannen (For-Loop)
-		// Nutzen Sie eine For-Schleife, um die 'kabelAnzahl' nacheinander zu spannen.
-		// Geben Sie pro Durchgang aus: "Haltekabel Nr. [X] wird festgezogen..."
-		// Schauen Sie dabei, dass X immer die Zahl des aktuellen Durchlaufs angibt. Also 1,2,3 usw..
-
-		fmt.Println("\n[AKTION]: Beginne mit dem Spannen der Kabel...")
-		for i := 1; i <= kabelAnzahl; i++ {
-			fmt.Printf("Haltekabel Nr. %d wird festgezogen...\n", i)
-		}
-
+	if flugZustand == "Stabil" && kraftReserve > 0 {
+		fmt.Println("Mission abgeschlossen: Der Falke hält seine Bahn!")
+		kreischen()
+		kreischen()
+		kreischen()
 	} else {
-		// Wenn die Qualität unter 80 liegt, geben Sie aus: "Baugenehmigung verweigert: Material zu schwach!"
-		fmt.Println("Baugenehmigung verweigert: Material zu schwach!")
+		fmt.Println("Fehler: Die mathematische Kapselung ist noch instabil.")
 	}
-
-	// --- TEIL 4: Abschlussbericht ---
-	fmt.Printf("\n--- Konstruktion der Einheit %s abgeschlossen ---\n", pfeilerKern.Name)
 }
